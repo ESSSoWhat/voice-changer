@@ -89,7 +89,8 @@ class VoiceChangerManager(ServerDeviceCallbacks):
         # 設定保存用情報
         self.stored_setting: dict[str, str | int | float] = {}
         if os.path.exists(STORED_SETTING_FILE):
-            self.stored_setting = json.load(open(STORED_SETTING_FILE, "r", encoding="utf-8"))
+            with open(STORED_SETTING_FILE, "r", encoding="utf-8") as f:
+                self.stored_setting = json.load(f)
         if "modelSlotIndex" in self.stored_setting:
             self.update_settings("modelSlotIndex", self.stored_setting["modelSlotIndex"])
         if "gpu" not in self.stored_setting:
@@ -113,7 +114,8 @@ class VoiceChangerManager(ServerDeviceCallbacks):
         saveItem.extend(saveItemForAllVoiceChanger)
         if key in saveItem:
             self.stored_setting[key] = val
-            json.dump(self.stored_setting, open(STORED_SETTING_FILE, "w"))
+            with open(STORED_SETTING_FILE, "w", encoding="utf-8") as f:
+                json.dump(self.stored_setting, f, indent=2)
 
     def _get_gpuInfos(self):
         devCount = torch.cuda.device_count()
